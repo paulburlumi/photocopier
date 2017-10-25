@@ -20,10 +20,12 @@ func main() {
 	flag.Parse()
 
 	if len(*src) == 0 {
-		log.Fatalf("invalid source folder: %s", *src)
+		flag.Usage()
+		log.Fatal("invalid source folder")
 	}
 	if len(*dst) == 0 {
-		log.Fatalf("invalid destination folder: %s", *dst)
+		flag.Usage()
+		log.Fatal("invalid destination folder")
 	}
 
 	if _, err := os.Stat(*src); os.IsNotExist(err) {
@@ -60,7 +62,6 @@ func processFiles(fileList <-chan string, src, dst string, verbose bool) {
 			continue
 		}
 
-		// Two convenience functions exist for date/time taken and GPS coords:
 		tm, err := x.DateTime()
 		if err != nil {
 			log.Printf("datetime: %v (skipping): %s", err, file)
