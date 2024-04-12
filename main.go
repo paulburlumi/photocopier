@@ -32,21 +32,21 @@ func main() {
 		log.Fatalf("Directory does not exist: %s", *src)
 	}
 
-	fileList := make(chan string)
-	go processFiles(fileList, *src, *dst, *verbose)
+	srcChan := make(chan string)
+	go processFiles(srcChan, *dst, *verbose)
 
 	filepath.Walk(*src, func(path string, f os.FileInfo, err error) error {
 		if strings.HasSuffix(strings.ToLower(path), ".jpg") {
-			fileList <- path
+			srcChan <- path
 		}
 		return nil
 	})
 
-	close(fileList)
+	close(srcChan)
 }
 
-func processFiles(fileList <-chan string, src, dst string, verbose bool) {
-	for file := range fileList {
+func processFiles(srcChan <-chan string, dst string, verbose bool) {
+	for file := range srcChan {
 		if verbose {
 			log.Println(file)
 		}
